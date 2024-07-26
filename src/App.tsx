@@ -5,10 +5,8 @@ import Home from './pages/home';
 import Login from './pages/login';
 import NotFound from './pages/NotFound';
 
-
 // Simple authentication check
 const isAuthenticated = () => {
-  // In a real app, you'd check for a valid token in localStorage or a state management solution
   return localStorage.getItem('token') !== null;
 };
 
@@ -20,27 +18,33 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <>{children}</>;
 };
 
+// Redirect if already authenticated
+const RedirectIfAuthenticated: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  if (isAuthenticated()) {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+};
+
+const LogOut = () => {
+  localStorage.removeItem('token');
+  return <Navigate to="/login"/>
+};
+
+
+
+
 const App: React.FC = () => {
   return (
     <Router>
       <div>
-       
         <Routes>
-        
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/signup" element={<RedirectIfAuthenticated><Signup /></RedirectIfAuthenticated>} />
+          <Route path="/login" element={<RedirectIfAuthenticated><Login /></RedirectIfAuthenticated>} />
+          <Route path="/logout" element={<LogOut />} />
           <Route path="/notfound" element={<NotFound />} />
-          <Route path="*" element={<Navigate to='/notfound'/>} />
-
-          <Route path="/login" element={<Login />} />
-          <Route 
-            path="/" 
-            element={
-             
-              <ProtectedRoute>
-                <Home/>
-              </ProtectedRoute>
-            } 
-          />
+          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="*" element={<Navigate to='/notfound' />} />
         </Routes>
       </div>
     </Router>
