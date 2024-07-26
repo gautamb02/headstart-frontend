@@ -27,8 +27,11 @@ const LoginForm: React.FC = () => {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Something went wrong');
+      if (data.success==0){
+        setErrorMessage(data.message);
+        setModalType('error');
+        setIsModalOpen(true);
+        return
       }
 
       setSuccessMessage('Login successful!');
@@ -39,12 +42,12 @@ const LoginForm: React.FC = () => {
       localStorage.setItem('token', data.token);
 
       // Redirect to home page or any other page after successful login
-      navigate('/home');
+      navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
-      setErrorMessage(typeof error === 'object' && error !== null ? (error as Error).message : 'An unknown error occurred');
-      setModalType('error');
-      setIsModalOpen(true);
+      console.log((error))
+      // setErrorMessage(typeof(error) === 'string'? error : "An unknown error occurred");
+      
     }
   };
 

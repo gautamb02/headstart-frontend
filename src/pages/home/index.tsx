@@ -5,7 +5,9 @@ const Home: React.FC = () => {
   return (
   <>
     <Navbar/>
-   <h1>Home</h1>
+  <div className='w-5/6 mx-auto'>
+  <h1 className='text-3xl font-semibold'>Home</h1>
+  </div>
   </>
   );
 };
