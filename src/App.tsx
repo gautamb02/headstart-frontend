@@ -10,6 +10,7 @@ import Home from "./pages/home";
 import Login from "./pages/login";
 import NotFound from "./pages/NotFound";
 import { OrganizationProvider } from "./context/organization/context";
+import Chat from "./pages/chat";
 
 // Simple authentication check
 const isAuthenticated = () => {
@@ -73,11 +74,20 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/chat"
+              element={
+                <ProtectedRoute>
+                  <Chat/>
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/notfound" />} />
           </Routes>
         </div>
       </Router>
     </OrganizationProvider>
+
   );
 };
 
