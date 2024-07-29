@@ -13,6 +13,7 @@ import { OrganizationProvider } from "./context/organization/context";
 import Members from "./pages/members";
 import ProtectedLayout from "./ProtectedLayout";
 import { RolesProvider } from "./context/roles/context";
+import Chat from "./pages/chat";
 
 // Simple authentication check
 const isAuthenticated = () => {
@@ -88,7 +89,7 @@ const App: React.FC = () => {
               path="/chat"
               element={
                 <ProtectedRoute>
-                  <Members />
+                  <Chat />
                 </ProtectedRoute>
               }
             />
