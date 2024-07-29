@@ -104,14 +104,14 @@ const MembersList: React.FC = () => {
 
     // Make the POST request
     fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        apikey: API_KEY,
-       
-        'Content-Type': '*',
-      },
-      body: formData,
-    })
+        method: "POST",
+        mode: 'cors',
+        headers: {
+          apikey: API_KEY,
+          'Content-Type': 'application/x-www-form-urlencoded', // Change this
+        },
+        body: formData,
+      })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
