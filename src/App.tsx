@@ -10,7 +10,9 @@ import Home from "./pages/home";
 import Login from "./pages/login";
 import NotFound from "./pages/NotFound";
 import { OrganizationProvider } from "./context/organization/context";
-import Chat from "./pages/chat";
+import Members from "./pages/members";
+import ProtectedLayout from "./ProtectedLayout";
+import { RolesProvider } from "./context/roles/context";
 
 // Simple authentication check
 const isAuthenticated = () => {
@@ -24,7 +26,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   if (!isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
-  return <>{children}</>;
+  return <ProtectedLayout>{children}</ProtectedLayout>;
 };
 
 // Redirect if already authenticated
@@ -45,8 +47,8 @@ const LogOut = () => {
 const App: React.FC = () => {
   return (
     <OrganizationProvider>
-      <Router>
-        <div>
+      <RolesProvider>
+        <Router>
           <Routes>
             <Route
               path="/signup"
@@ -75,17 +77,25 @@ const App: React.FC = () => {
               }
             />
             <Route
+              path="/members"
+              element={
+                <ProtectedRoute>
+                  <Members />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/chat"
               element={
                 <ProtectedRoute>
-                  <Chat/>
+                  <Members />
                 </ProtectedRoute>
               }
             />
             <Route path="*" element={<Navigate to="/notfound" />} />
           </Routes>
-        </div>
-      </Router>
+        </Router>
+      </RolesProvider>
     </OrganizationProvider>
 
   );
