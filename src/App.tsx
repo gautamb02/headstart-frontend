@@ -14,6 +14,7 @@ import Members from "./pages/members";
 import ProtectedLayout from "./ProtectedLayout";
 import { RolesProvider } from "./context/roles/context";
 import Chat from "./pages/chat";
+import Settings from "./pages/settings";
 
 // Simple authentication check
 const isAuthenticated = () => {
@@ -90,6 +91,14 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Chat />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               }
             />
