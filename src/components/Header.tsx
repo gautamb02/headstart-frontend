@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useOrganizationContext } from '../../context/organization/context';
-import AddOrganizationModal from './AddOrganizationModal';
+import { useOrganizationContext } from '../context/organization/context';
+import AddOrganizationModal from '../pages/home/AddOrganizationModal';
 
 const Header: React.FC = () => {
   const { state } = useOrganizationContext();

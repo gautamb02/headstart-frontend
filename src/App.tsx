@@ -10,6 +10,8 @@ import Home from "./pages/home";
 import Login from "./pages/login";
 import NotFound from "./pages/NotFound";
 import { OrganizationProvider } from "./context/organization/context";
+import Members from "./pages/members";
+import ProtectedLayout from "./ProtectedLayout";
 
 // Simple authentication check
 const isAuthenticated = () => {
@@ -23,7 +25,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   if (!isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
-  return <>{children}</>;
+  return <ProtectedLayout>{children}</ProtectedLayout>;
 };
 
 // Redirect if already authenticated
@@ -70,6 +72,14 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/members"
+              element={
+                <ProtectedRoute>
+                  <Members />
                 </ProtectedRoute>
               }
             />

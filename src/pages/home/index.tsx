@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import Navbar from "../../components/Navbar";
 import { useOrganizationContext } from "../../context/organization/context";
-import Header from "./Header";
+import Header from "../../components/Header";
 import { fetchOrganizations } from "../../context/organization/actions";
+import Applications from "./Applications";
 
 const Home: React.FC = () => {
   const { dispatch } = useOrganizationContext();
@@ -12,10 +12,10 @@ const Home: React.FC = () => {
   }, [dispatch]);
   return (
     <>
-      <Navbar />
+     
       <div className="w-5/6 mx-auto">
         <Header />
-        
+        <Applications/>
       </div>
     </>
   );

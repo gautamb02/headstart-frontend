@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import Config from '../../config';
+import { fetchOrganizations } from '../../context/organization/actions';
+import { useOrganizationContext } from '../../context/organization/context';
 
 interface ModalProps {
   onClose: () => void;
@@ -8,10 +11,37 @@ const AddOrganizationModal: React.FC<ModalProps> = ({ onClose }) => {
   const [name, setOrgName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const {dispatch} = useOrganizationContext();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Add the new organization logic here
-    console.log('New Organization:', name);
+    const { API_URL } = Config;
+
+    try {
+      let options = {
+        method: 'POST',
+        headers: {
+          Accept: '*/*',
+          authorization: localStorage.getItem('token') || '',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({  name, description })
+      };
+
+      const res = await fetch(`${API_URL}/api/organization/create`, options);
+
+      if (res.ok) {
+        // Assuming the API returns the newly created organization, you might want to add it to your state.
+        const newOrg = await res.json();
+        console.log('New Organization Created:', newOrg);
+        fetchOrganizations(dispatch);
+        // Optionally, you can add the new organization to the context or state here
+      } else {
+        console.error('Failed to create organization');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+
     onClose(); // Close the modal after submission
   };
 
