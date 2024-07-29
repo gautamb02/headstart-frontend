@@ -1,17 +1,25 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Signup from './pages/signup';
-import Home from './pages/home';
-import Login from './pages/login';
-import NotFound from './pages/NotFound';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
+import Signup from "./pages/signup";
+import Home from "./pages/home";
+import Login from "./pages/login";
+import NotFound from "./pages/NotFound";
+import { OrganizationProvider } from "./context/organization/context";
 
 // Simple authentication check
 const isAuthenticated = () => {
-  return localStorage.getItem('token') !== null;
+  return localStorage.getItem("token") !== null;
 };
 
 // Protected route component
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   if (!isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
@@ -19,7 +27,9 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 };
 
 // Redirect if already authenticated
-const RedirectIfAuthenticated: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const RedirectIfAuthenticated: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   if (isAuthenticated()) {
     return <Navigate to="/" replace />;
   }
@@ -27,27 +37,47 @@ const RedirectIfAuthenticated: React.FC<{ children: React.ReactNode }> = ({ chil
 };
 
 const LogOut = () => {
-  localStorage.removeItem('token');
-  return <Navigate to="/login"/>
+  localStorage.removeItem("token");
+  return <Navigate to="/login" />;
 };
-
-
-
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <div>
-        <Routes>
-          <Route path="/signup" element={<RedirectIfAuthenticated><Signup /></RedirectIfAuthenticated>} />
-          <Route path="/login" element={<RedirectIfAuthenticated><Login /></RedirectIfAuthenticated>} />
-          <Route path="/logout" element={<LogOut />} />
-          <Route path="/notfound" element={<NotFound />} />
-          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-          <Route path="*" element={<Navigate to='/notfound' />} />
-        </Routes>
-      </div>
-    </Router>
+    <OrganizationProvider>
+      <Router>
+        <div>
+          <Routes>
+            <Route
+              path="/signup"
+              element={
+                <RedirectIfAuthenticated>
+                  <Signup />
+                </RedirectIfAuthenticated>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <RedirectIfAuthenticated>
+                  <Login />
+                </RedirectIfAuthenticated>
+              }
+            />
+            <Route path="/logout" element={<LogOut />} />
+            <Route path="/notfound" element={<NotFound />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/notfound" />} />
+          </Routes>
+        </div>
+      </Router>
+    </OrganizationProvider>
   );
 };
 
