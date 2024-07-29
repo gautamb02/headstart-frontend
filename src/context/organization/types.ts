@@ -12,6 +12,7 @@ export interface Organization {
   export interface State {
     organizations: Organization[];
     message: string;
+    selectedOrg?: string; 
   }
   
   export interface Action {

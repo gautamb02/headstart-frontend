@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import MemberModal from "./MemberModal";
 import Config from "../../config";
 import MembersList from "./MembersList";
+import { fetchOrganizations } from "../../context/organization/actions";
+import { useOrganizationContext } from "../../context/organization/context";
 
 const Members: React.FC = () => {
+  const {dispatch}=  useOrganizationContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  useEffect(() => {
+    fetchOrganizations(dispatch);
+  }, [dispatch]);
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };

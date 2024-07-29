@@ -10,15 +10,21 @@ const Header: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const { roledispatch } = useRolesContext();
+  const { dispatch } = useOrganizationContext();
 
   useEffect(() => {
-    // Fetch roles and organization data
+    const orgId = localStorage.getItem('selectedOrganization')
+    if(orgId){
+      setSelectedOrg(orgId);
+      dispatch({ type: 'SET_SELECTED_ORG', payload: orgId });
+    }
     fetchRoles(roledispatch);
   }, [state.organizations, roledispatch]); // Depend on organizations and roledispatch
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const orgId = event.target.value;
     setSelectedOrg(orgId);
+    dispatch({ type: 'SET_SELECTED_ORG', payload: orgId });
     localStorage.setItem("selectedOrganization", orgId);
   };
 

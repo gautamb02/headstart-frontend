@@ -1,9 +1,12 @@
+
+// reducer.ts
 import { State, Action } from './types';
-import { SET_ORGANIZATIONS, SET_MESSAGE } from './actions';
+import { SET_ORGANIZATIONS, SET_MESSAGE, SET_SELECTED_ORG } from './actions';
 
 export const initialState: State = {
   organizations: [],
   message: '',
+  selectedOrg: '', // Initialize this
 };
 
 export const reducer = (state: State, action: Action): State => {
@@ -17,6 +20,11 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         message: action.payload,
+      };
+    case SET_SELECTED_ORG: // Handle the new action
+      return {
+        ...state,
+        selectedOrg: action.payload,
       };
     default:
       return state;

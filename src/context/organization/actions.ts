@@ -1,19 +1,24 @@
 import Config from "../../config";
-import { Action, Organization } from "./types";
+import {  Organization } from "./types";
+// actions.ts
+export const SET_ORGANIZATIONS = 'SET_ORGANIZATIONS';
+export const SET_MESSAGE = 'SET_MESSAGE';
+export const SET_SELECTED_ORG = 'SET_SELECTED_ORG'; // Add this line
 
-export const SET_ORGANIZATIONS = "SET_ORGANIZATIONS";
-export const SET_MESSAGE = "SET_MESSAGE";
-
-export const setOrganizations = (organizations: Organization[]): Action => ({
+export const setOrganizations = (organizations: Organization[]) => ({
   type: SET_ORGANIZATIONS,
   payload: organizations,
 });
 
-export const setMessage = (message: string): Action => ({
+export const setMessage = (message: string) => ({
   type: SET_MESSAGE,
   payload: message,
 });
 
+export const setSelectedOrg = (orgId: string) => ({
+  type: SET_SELECTED_ORG,
+  payload: orgId,
+});
 
 
 

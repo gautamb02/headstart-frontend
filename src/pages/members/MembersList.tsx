@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Config from '../../config';
 import { useRolesContext } from '../../context/roles/context';
+import { useOrganizationContext } from '../../context/organization/context';
 
 interface Member {
   id: string;
@@ -22,6 +23,7 @@ const MembersList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const {rolesstate}= useRolesContext();
+ const {state}= useOrganizationContext();
 
   const roleMap =  new Map(rolesstate.roles.map(role => [role.id, role.role]));
   useEffect(() => {
@@ -59,7 +61,7 @@ const MembersList: React.FC = () => {
     };
 
     fetchMembers();
-  }, []); // Empty dependency array means this useEffect runs once on mount
+  }, [state.selectedOrg]); // Empty dependency array means this useEffect runs once on mount
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
