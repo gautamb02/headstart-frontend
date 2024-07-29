@@ -6,7 +6,7 @@ interface ModalProps {
 
 const AddOrganizationModal: React.FC<ModalProps> = ({ onClose }) => {
   const [name, setOrgName] = useState<string>('');
-  const [description, setOrgName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -39,7 +39,7 @@ const AddOrganizationModal: React.FC<ModalProps> = ({ onClose }) => {
             <input
               type="text"
               value={name}
-              onChange={(e) => setOrgName(e.target.value)}
+              onChange={(e) => setDescription(e.target.value)}
               className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
