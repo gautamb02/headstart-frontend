@@ -1,5 +1,5 @@
 // components/WhatsAppModal.tsx
-import React, { useState } from 'react';
+import React from 'react';
 
 import {Member} from './MembersList'
 import Config from '../../config';
