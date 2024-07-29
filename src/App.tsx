@@ -84,11 +84,20 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/chat"
+              element={
+                <ProtectedRoute>
+                  <Members />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/notfound" />} />
           </Routes>
         </Router>
       </RolesProvider>
     </OrganizationProvider>
+
   );
 };
 
