@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import { OrganizationProvider } from "./context/organization/context";
 import Members from "./pages/members";
 import ProtectedLayout from "./ProtectedLayout";
+import { RolesProvider } from "./context/roles/context";
 
 // Simple authentication check
 const isAuthenticated = () => {
@@ -46,8 +47,8 @@ const LogOut = () => {
 const App: React.FC = () => {
   return (
     <OrganizationProvider>
-      <Router>
-        <div>
+      <RolesProvider>
+        <Router>
           <Routes>
             <Route
               path="/signup"
@@ -85,8 +86,8 @@ const App: React.FC = () => {
             />
             <Route path="*" element={<Navigate to="/notfound" />} />
           </Routes>
-        </div>
-      </Router>
+        </Router>
+      </RolesProvider>
     </OrganizationProvider>
   );
 };
