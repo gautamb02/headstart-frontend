@@ -19,7 +19,7 @@ const Header: React.FC = () => {
       dispatch({ type: 'SET_SELECTED_ORG', payload: orgId });
     }
     fetchRoles(roledispatch);
-  }, [state.organizations, roledispatch]); // Depend on organizations and roledispatch
+  }, [state.selectedOrg]); // Depend on organizations and roledispatch
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const orgId = event.target.value;
