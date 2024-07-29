@@ -75,12 +75,19 @@ const MembersList: React.FC = () => {
 
   const handleSendMessage = (phoneNumber: string) => {
     // Define the necessary constants
-    const API_KEY = Config.WA_USERID;
+    const API_KEY = Config.WA_API;
     const USER_ID = Config.WA_USERID;
     const SENDING_NUMBER = Config.WA_SENDER_NUMBER;
-    const RECEIVER_PHONE_NUMBER = "919970102190"; // Replace with the recipient's phone number
-    const TEMPLATE_NAME = Config.WA_TEMPLATE_NAME; // Replace with your template name
+    const RECEIVER_PHONE_NUMBER = "919970102190"; 
+    const TEMPLATE_NAME = Config.WA_TEMPLATE_NAME; 
 
+    console.log(
+         API_KEY,
+         USER_ID,
+         SENDING_NUMBER,
+         RECEIVER_PHONE_NUMBER ,
+         TEMPLATE_NAME
+    )
     // Construct the form data
     const formData = new FormData();
     formData.append("userid", USER_ID);
