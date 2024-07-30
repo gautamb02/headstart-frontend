@@ -3,72 +3,43 @@ import Config from "../../config";
 import { useRolesContext } from "../../context/roles/context";
 import { useOrganizationContext } from "../../context/organization/context";
 import WhatsAppModal from "./WhatsappModal";
+import { Member } from "./index";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSort,
+  faSortUp,
+  faSortDown,
+} from "@fortawesome/free-solid-svg-icons";
 
 const { WA_MSG } = Config;
-export interface Member {
-  id: string;
-  email: string;
-  name: string;
-  phoneNumber: string;
-  roleId: string;
-  userId: string | null;
-  status: string;
-  addedAt: {
-    _seconds: number;
-    _nanoseconds: number;
-  };
+
+interface MembersListProps {
+  members: Member[];
+  loading: boolean;
+  fetchMembers: () => void;
+  error: string | null;
 }
 
-const MembersList: React.FC = () => {
-  const [members, setMembers] = useState<Member[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+const MembersList: React.FC<MembersListProps> = ({
+  members,
+  loading,
+  fetchMembers,
+  error,
+}) => {
   const [selectedPhoneNumber, setSelectedPhoneNumber] = useState<string | null>(
     null
   );
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortedField, setSortedField] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
   const { rolesstate } = useRolesContext();
   const { state } = useOrganizationContext();
 
   const roleMap = new Map(rolesstate.roles.map((role) => [role.id, role.role]));
-
-  const fetchMembers = async () => {
-    const token = localStorage.getItem("token") || "";
-    const orgId = localStorage.getItem("selectedOrganization");
-
-    try {
-      const response = await fetch(
-        `${Config.API_URL}/api/organization/${orgId}/members`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "*/*",
-            authorization: token,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        setMembers(data.members);
-      } else {
-        setError(data.message);
-      }
-    } catch (error) {
-      console.error("Error fetching members:", error);
-      setError("An error occurred while fetching members");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchMembers();
@@ -76,7 +47,7 @@ const MembersList: React.FC = () => {
 
   const handleSendMessage = async (phoneNumber: string) => {
     const token = localStorage.getItem("token") || "";
-  
+
     const options = {
       method: "POST",
       headers: {
@@ -86,24 +57,24 @@ const MembersList: React.FC = () => {
       },
       body: JSON.stringify({
         msg: WA_MSG,
-        mobile: phoneNumber || '919970102190',
+        mobile: phoneNumber || "919970102190",
         msgType: "text",
         templateName: "ssb",
       }),
     };
-  
+
     try {
       const res = await fetch(`${Config.API_URL}/api/wa/send`, options);
-  
+
       if (!res.ok) {
         // Handle non-200 responses
         throw new Error(`HTTP error! Status: ${res.status}`);
       }
-  
+
       const jsonResponse = await res.json();
       console.log("WhatsApp Response: ", jsonResponse);
       console.log(`Message sent to ${phoneNumber}`);
-  
+
       // Show success alert
       alert(`Message successfully sent to ${phoneNumber}`);
     } catch (error) {
@@ -111,24 +82,96 @@ const MembersList: React.FC = () => {
       alert(`Failed to send message to ${phoneNumber}`);
     }
   };
-  
+
+  const filteredMembers = members.filter((member) => {
+    member.role = roleMap.get(member.roleId);
+    return JSON.stringify(member)
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+  });
+
+  const sortedMembers = [...filteredMembers].sort((a, b) => {
+    if (sortedField) {
+      const aValue = a[sortedField as keyof Member];
+      const bValue = b[sortedField as keyof Member];
+      if (
+        aValue !== null &&
+        bValue !== null &&
+        aValue !== undefined &&
+        bValue !== undefined
+      ) {
+        if (aValue < bValue) {
+          return sortDirection === "asc" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortDirection === "asc" ? 1 : -1;
+        }
+      }
+    }
+    return 0;
+  });
+
+  const handleSort = (field: string) => {
+    if (sortedField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortedField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const getSortIcon = (field: string) => {
+    if (sortedField === field) {
+      return sortDirection === "asc" ? faSortUp : faSortDown;
+    }
+    return faSort;
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <div className="w-full mx-auto mt-4">
+      <input
+        type="text"
+        placeholder="Search by name, role, phone"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="mb-4 p-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out w-full"
+      />
+
       <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
         <thead>
           <tr className="bg-gray-100 text-left">
-            <th className="px-4 py-2 border-b">Name</th>
-            <th className="px-4 py-2 border-b">Phone Number</th>
-            <th className="px-4 py-2 border-b">Role ID</th>
-            <th className="px-4 py-2 border-b">Status</th>
-            <th className="px-4 py-2 border-b">Whatsapp</th>
+            <th
+              className="px-4   py-2 border-b cursor-pointer"
+              onClick={() => handleSort("name")}
+            >
+              Name <FontAwesomeIcon icon={getSortIcon("name")} />
+            </th>
+            <th
+              className="px-4   py-2 border-b cursor-pointer"
+              onClick={() => handleSort("phoneNumber")}
+            >
+              Phone Number <FontAwesomeIcon icon={getSortIcon("phoneNumber")} />
+            </th>
+            <th
+              className="px-4   py-2 border-b cursor-pointer"
+              onClick={() => handleSort("roleId")}
+            >
+              Role <FontAwesomeIcon icon={getSortIcon("roleId")} />
+            </th>
+            <th
+              className="px-4   py-2 border-b cursor-pointer"
+              onClick={() => handleSort("status")}
+            >
+              Status <FontAwesomeIcon icon={getSortIcon("status")} />
+            </th>
+            <th className="px-4  py-2 border-b">WhatsApp</th>
           </tr>
         </thead>
         <tbody>
-          {members.map((member) => (
+          {sortedMembers.map((member) => (
             <tr key={member.id}>
               <td className="px-4 py-2 border-b">{member.name}</td>
               <td className="px-4 py-2 border-b">{member.phoneNumber}</td>

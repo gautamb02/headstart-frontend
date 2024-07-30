@@ -5,7 +5,7 @@ interface MemberModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: { email: string; name: string; phoneNumber: string; roleId: string }) => void;
-
+ 
 }
 
 const MemberModal: React.FC<MemberModalProps> = ({ isOpen, onClose, onSubmit }) => {
@@ -17,6 +17,7 @@ const MemberModal: React.FC<MemberModalProps> = ({ isOpen, onClose, onSubmit }) 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     onSubmit({ email, name, phoneNumber, roleId });
+    // fetchMembers();
     onClose();
   };
 

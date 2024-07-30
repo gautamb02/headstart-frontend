@@ -1,7 +1,7 @@
 // components/WhatsAppModal.tsx
 import React from 'react';
 
-import {Member} from './MembersList'
+import {Member} from './index'
 import Config from '../../config';
 interface WhatsAppModalProps {
   isOpen: boolean;

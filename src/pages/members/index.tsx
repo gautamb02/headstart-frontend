@@ -6,9 +6,68 @@ import MembersList from "./MembersList";
 import { fetchOrganizations } from "../../context/organization/actions";
 import { useOrganizationContext } from "../../context/organization/context";
 
+
+export interface Member {
+  id: string;
+  role : string  |undefined;
+  email: string;
+  name: string;
+  phoneNumber: string;
+  roleId: string;
+  userId: string | null;
+  status: string;
+  addedAt: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
+}
+
+
+
 const Members: React.FC = () => {
   const {dispatch}=  useOrganizationContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const fetchMembers = async () => {
+    const token = localStorage.getItem("token") || "";
+    const orgId = localStorage.getItem("selectedOrganization");
+
+    try {
+      const response = await fetch(
+        `${Config.API_URL}/api/organization/${orgId}/members`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "*/*",
+            authorization: token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      console.log(data)
+      if (data.success) {
+        setMembers(data.members);
+      } else {
+        setError(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching members:", error);
+      setError("An error occurred while fetching members");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   useEffect(() => {
     fetchOrganizations(dispatch);
   }, [dispatch]);
@@ -45,6 +104,7 @@ const Members: React.FC = () => {
 
       const data = await response.json();
       if (data.success) {
+        fetchMembers()
         alert(data.message);
         // You might want to update the members list here
       } else {
@@ -73,7 +133,7 @@ const Members: React.FC = () => {
         onSubmit={handleSubmit}
       />
 
-      <MembersList/>
+      <MembersList members={members} loading={loading} fetchMembers={fetchMembers} error={error} />
     </div>
   );
 };
