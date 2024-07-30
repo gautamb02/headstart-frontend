@@ -10,6 +10,7 @@ import {
   faSortUp,
   faSortDown,
 } from "@fortawesome/free-solid-svg-icons";
+import Select from "react-select"; // Import react-select
 
 const { WA_MSG } = Config;
 
@@ -35,6 +36,8 @@ const MembersList: React.FC<MembersListProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [sortedField, setSortedField] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
+  const [selectedRoles, setSelectedRoles] = useState<{ value: string; label: string }[]>([]);
 
   const { rolesstate } = useRolesContext();
   const { state } = useOrganizationContext();
@@ -85,9 +88,16 @@ const MembersList: React.FC<MembersListProps> = ({
 
   const filteredMembers = members.filter((member) => {
     member.role = roleMap.get(member.roleId);
-    return JSON.stringify(member)
+
+    const matchesSearchQuery = JSON.stringify(member)
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
+
+    const matchesSelectedRoles =
+      selectedRoles.length === 0 ||
+      selectedRoles.some((role) => role.value === member.roleId);
+
+    return matchesSearchQuery && matchesSelectedRoles;
   });
 
   const sortedMembers = [...filteredMembers].sort((a, b) => {
@@ -127,18 +137,35 @@ const MembersList: React.FC<MembersListProps> = ({
     return faSort;
   };
 
+  const roleOptions = rolesstate.roles.map((role) => ({
+    value: role.id,
+    label: role.role,
+  }));
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <div className="w-full mx-auto mt-4">
-      <input
+     <div className="flex w-full items-center justify-between ">
+
+     <input
         type="text"
         placeholder="Search by name, role, phone"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="mb-4 p-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out w-full"
+        className="mb-4 p-2 border border-gray-300 rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out w-1/4"
       />
+
+      <Select
+        isMulti
+        options={roleOptions}
+        value={selectedRoles}
+        onChange={(selected) => setSelectedRoles((selected || []) as { value: string; label: string; }[])}
+        placeholder="Filter by roles"
+        className="mb-4 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out w-3/4"
+      />
+     </div>
 
       <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
         <thead>
