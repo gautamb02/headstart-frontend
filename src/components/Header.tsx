@@ -13,18 +13,24 @@ const Header: React.FC = () => {
   const { dispatch } = useOrganizationContext();
 
   useEffect(() => {
-    const orgId = localStorage.getItem('selectedOrganization')
-    if(orgId){
-      setSelectedOrg(orgId);
-      dispatch({ type: 'SET_SELECTED_ORG', payload: orgId });
-    }
-    fetchRoles(roledispatch);
-  }, [state.selectedOrg]); // Depend on organizations and roledispatch
+    const orgId = localStorage.getItem("selectedOrganization");
 
+    if (orgId) {
+      setSelectedOrg(orgId);
+      dispatch({ type: "SET_SELECTED_ORG", payload: orgId });
+    } else if (state.organizations.length === 1) {
+      const orgId = state.organizations[0].id;
+      setSelectedOrg(orgId);
+      dispatch({ type: "SET_SELECTED_ORG", payload: orgId });
+      localStorage.setItem("selectedOrganization", orgId);
+    }
+
+    fetchRoles(roledispatch);
+  }, [state.organizations, roledispatch]);
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const orgId = event.target.value;
     setSelectedOrg(orgId);
-    dispatch({ type: 'SET_SELECTED_ORG', payload: orgId });
+    dispatch({ type: "SET_SELECTED_ORG", payload: orgId });
     localStorage.setItem("selectedOrganization", orgId);
   };
 

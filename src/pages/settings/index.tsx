@@ -3,6 +3,7 @@ import Header from '../../components/Header';
 import { useRolesContext } from '../../context/roles/context';
 import { fetchRoles } from '../../context/roles/actions'; // Import action creator
 import Config from '../../config';
+import { useOrganizationContext } from '../../context/organization/context';
 
 interface Role {
   id: string;
@@ -11,6 +12,7 @@ interface Role {
 
 const Settings: React.FC = () => {
   const { rolesstate, roledispatch } = useRolesContext();
+  const { state } = useOrganizationContext();
   const [newRole, setNewRole] = useState('');
   const [message, setMessage] = useState('');
 
@@ -24,6 +26,8 @@ const Settings: React.FC = () => {
 
     try {
       const orgId =localStorage.getItem('selectedOrganization'); // Replace with actual organization ID
+      // const orgId =state.selectedOrg 
+      console.log(orgId)
       const token = localStorage.getItem('token'); // Replace with actual token
 
       const response = await fetch(`${Config.API_URL}/api/organization/${orgId}/roles`, {
